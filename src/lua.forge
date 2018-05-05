@@ -1,0 +1,85 @@
+
+for _, cc in toolsets('^cc.*') do
+    local cc = cc:inherit {
+        warning_level = 0;
+        defines = switch { 
+            cc.platform;
+            linux = { 'LUA_USE_POSIX', 'LUA_USE_DLOPEN' };
+            macos = { 'LUA_USE_POSIX', 'LUA_USE_DLOPEN' };
+            windows = { '_CRT_SECURE_NO_DEPRECATE' };
+        };
+    };
+
+    cc:StaticLibrary '${lib}/liblua_${platform}_${architecture}' {
+        cc:Cc '${obj}/%1' {
+            'lapi.c';
+            'lauxlib.c';
+            'lbaselib.c';
+            'lcode.c';
+            'lcorolib.c';
+            'lctype.c';
+            'ldblib.c';
+            'ldebug.c';
+            'ldo.c';
+            'ldump.c';
+            'lfunc.c';
+            'lgc.c';
+            'linit.c';
+            'liolib.c';
+            'llex.c';
+            'lmathlib.c';
+            'lmem.c';
+            'loadlib.c';
+            'lobject.c';
+            'lopcodes.c';
+            'loslib.c';
+            'lparser.c';
+            'lstate.c';
+            'lstring.c';
+            'lstrlib.c';
+            'ltable.c';
+            'ltablib.c';
+            'ltm.c';
+            'lundump.c';
+            'lutf8lib.c';
+            'lvm.c';
+            'lzio.c';
+        };
+    };
+end
+
+for _, cc in toolsets('^cc_linux.*', '^cc_macos.*', '^cc_windows.*') do
+    local cc = cc:inherit {
+        warning_level = 0;
+        defines = switch { 
+            operating_system();
+            linux = { 'LUA_USE_POSIX', 'LUA_USE_DLOPEN' };
+            macos = { 'LUA_USE_POSIX', 'LUA_USE_DLOPEN' };
+            windows = { '_CRT_SECURE_NO_DEPRECATE' };
+        };
+        libraries = switch {
+            cc.platform;
+            linux = {
+                'dl';
+            };
+            windows = {
+                'ws2_32.lib';
+            };
+        };
+    };
+    cc:all {
+        cc:Executable '${bin}/luac' {
+            '${lib}/liblua_${platform}_${architecture}';
+            cc:Cc '${obj}/%1' {
+                'luac.c'
+            };
+        };        
+
+        cc:Executable '${bin}/lua' {
+            '${lib}/liblua_${platform}_${architecture}';
+            cc:Cc '${obj}/%1' {
+                'lua.c'
+            };
+        };
+    };
+end
