@@ -7,7 +7,7 @@ for _, forge in forge:builds('cc.*') do
     forge:StaticLibrary '${lib}/liblua_${architecture}' {
         forge:Cc '${obj}/%1' {
             defines = forge:switch { 
-                forge:operating_system();
+                operating_system();
                 linux = { 'LUA_USE_POSIX', 'LUA_USE_DLOPEN' };
                 macos = { 'LUA_USE_POSIX', 'LUA_USE_DLOPEN' };
                 windows = { '_CRT_SECURE_NO_DEPRECATE' };
