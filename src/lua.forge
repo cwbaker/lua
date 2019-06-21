@@ -1,12 +1,12 @@
 
-for _, forge in forge:builds('cc.*') do
+for _, forge in toolsets('cc.*') do
     local forge = forge:inherit {
         warning_level = 0;
     };
 
     forge:StaticLibrary '${lib}/liblua_${architecture}' {
         forge:Cc '${obj}/%1' {
-            defines = forge:switch { 
+            defines = switch { 
                 operating_system();
                 linux = { 'LUA_USE_POSIX', 'LUA_USE_DLOPEN' };
                 macos = { 'LUA_USE_POSIX', 'LUA_USE_DLOPEN' };
@@ -49,26 +49,27 @@ for _, forge in forge:builds('cc.*') do
     };
 end
 
-local forge = forge:build('cc.*');
-if forge:platform_matches('macos') or forge:platform_matches('windows') then
-    local forge = forge:inherit {
-        warning_level = 0;
-    };
-    forge:all {
-        forge:Executable '${bin}/luac' {
-            '${lib}/liblua_${architecture}';
-            forge:Cc '${obj}/%1' {
-                defines = { '_CRT_SECURE_NO_DEPRECATE' };
-                'luac.c'
-            };
-        };        
+for _, forge in toolsets('cc.*') do
+    if forge:platform_matches('macos') or forge:platform_matches('windows') then
+        local forge = forge:inherit {
+            warning_level = 0;
+        };
+        forge:all {
+            forge:Executable '${bin}/luac' {
+                '${lib}/liblua_${architecture}';
+                forge:Cc '${obj}/%1' {
+                    defines = { '_CRT_SECURE_NO_DEPRECATE' };
+                    'luac.c'
+                };
+            };        
 
-        forge:Executable '${bin}/lua' {
-            '${lib}/liblua_${architecture}';
-            forge:Cc '${obj}/%1' {
-                defines = { '_CRT_SECURE_NO_DEPRECATE' };
-                'lua.c'
+            forge:Executable '${bin}/lua' {
+                '${lib}/liblua_${architecture}';
+                forge:Cc '${obj}/%1' {
+                    defines = { '_CRT_SECURE_NO_DEPRECATE' };
+                    'lua.c'
+                };
             };
         };
-    };
+    end
 end
