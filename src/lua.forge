@@ -4,7 +4,7 @@ for _, forge in toolsets('cc.*') do
         warning_level = 0;
     };
 
-    forge:StaticLibrary '${lib}/liblua_${architecture}' {
+    forge:StaticLibrary '${lib}/liblua_${platform}_${architecture}' {
         forge:Cc '${obj}/%1' {
             defines = switch { 
                 operating_system();
