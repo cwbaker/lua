@@ -59,7 +59,7 @@ for _, cc in toolsets( 'cc_linux.*', 'cc_macos.*', 'cc_windows.*' ) do
             'dl';
         };
         windows = {
-            'ws2_32';
+            'ws2_32.lib';
         };
     };
     cc:all {
