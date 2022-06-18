@@ -54,7 +54,7 @@ for _, cc in toolsets( 'cc_linux.*', 'cc_macos.*', 'cc_windows.*' ) do
         warning_level = 0;
     };
     local libraries = switch {
-        cc.settings.platform;
+        cc.platform;
         linux = {
             'dl';
         };
